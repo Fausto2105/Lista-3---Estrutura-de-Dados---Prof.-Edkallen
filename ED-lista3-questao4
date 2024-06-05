@@ -1,1 +1,41 @@
+/*
+** Função : Verificar a Conjectura de Goldbach para números pares entre 700 e 1100
+** Autor : [Seu Nome]
+** Data : [Data de hoje]
+** Observações: O programa verifica se todo número par entre 700 e 1100 pode ser escrito como a soma de dois números primos.
+*/
+
+#include <stdio.h>
+#include <stdbool.h>
+
+bool eh_primo(int n) {
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 == 0 || n % 3 == 0) return false;
+    for (int i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0) return false;
+    }
+    return true;
+}
+
+int main() {
+    for (int num = 700; num <= 1100; num++) {
+        if (num % 2 != 0) continue; 
+
+        bool encontrado = false;
+        for (int i = 2; i <= num / 2; i++) {
+            if (eh_primo(i) && eh_primo(num - i)) {
+                printf("%d = %d + %d\n", num, i, num - i);
+                encontrado = true;
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            printf("Nenhuma combinação para %d, o que é contra a Conjectura de Goldbach.\n", num);
+        }
+    }
+    
+    return 0;
+}
 
