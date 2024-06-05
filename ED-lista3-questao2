@@ -1,0 +1,124 @@
+/*
+** Função : Gerenciamento de registros de empregados
+** Autor : [Seu Nome]
+** Data : [Data de hoje]
+** Observações: O programa gerencia registros de empregados, permitindo adicionar, visualizar e excluir registros.
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_NAME_LENGTH 100
+#define MAX_RG_LENGTH 20
+
+typedef struct {
+    int dia;
+    int mes;
+    int ano;
+} Data;
+
+typedef struct {
+    char nome[MAX_NAME_LENGTH];
+    Data data_nascimento;
+    char rg[MAX_RG_LENGTH];
+    Data data_admissao;
+    double salario;
+} Empregado;
+
+void ler_empregado(Empregado* empregado) {
+    printf("Digite o nome: ");
+    fgets(empregado->nome, MAX_NAME_LENGTH, stdin);
+    empregado->nome[strcspn(empregado->nome, "\n")] = '\0'; 
+
+    printf("Digite a data de nascimento (dia mes ano): ");
+    scanf("%d %d %d", &empregado->data_nascimento.dia, &empregado->data_nascimento.mes, &empregado->data_nascimento.ano);
+    getchar(); 
+
+    printf("Digite o RG: ");
+    fgets(empregado->rg, MAX_RG_LENGTH, stdin);
+    empregado->rg[strcspn(empregado->rg, "\n")] = '\0'; 
+
+    printf("Digite a data de admissão (dia mes ano): ");
+    scanf("%d %d %d", &empregado->data_admissao.dia, &empregado->data_admissao.mes, &empregado->data_admissao.ano);
+
+    printf("Digite o salário: ");
+    scanf("%lf", &empregado->salario);
+    getchar(); 
+}
+
+void escrever_empregado(Empregado* empregado) {
+    printf("\nNome: %s\n", empregado->nome);
+    printf("Data de Nascimento: %02d/%02d/%04d\n", empregado->data_nascimento.dia, empregado->data_nascimento.mes, empregado->data_nascimento.ano);
+    printf("RG: %s\n", empregado->rg);
+    printf("Data de Admissão: %02d/%02d/%04d\n", empregado->data_admissao.dia, empregado->data_admissao.mes, empregado->data_admissao.ano);
+    printf("Salário: %.2lf\n", empregado->salario);
+}
+
+void excluir_empregado(Empregado** empregados, int* n, int indice) {
+    if (indice < 0 || indice >= *n) {
+        printf("Índice inválido\n");
+        return;
+    }
+
+    for (int i = indice; i < *n - 1; i++) {
+        (*empregados)[i] = (*empregados)[i + 1];
+    }
+
+    (*n)--;
+    *empregados = (Empregado*)realloc(*empregados, (*n) * sizeof(Empregado));
+    if (*empregados == NULL && *n > 0) {
+        printf("Erro na realocação de memória\n");
+        exit(1);
+    }
+}
+
+int main() {
+    int n = 0;
+    Empregado* empregados = NULL;
+
+    int escolha;
+    do {
+        printf("\nEscolha uma operação:\n");
+        printf("1. Adicionar empregado\n");
+        printf("2. Visualizar todos os empregados\n");
+        printf("3. Excluir empregado\n");
+        printf("4. Sair\n");
+        printf("Escolha: ");
+        scanf("%d", &escolha);
+        getchar(); 
+
+        switch (escolha) {
+            case 1:
+                n++;
+                empregados = (Empregado*)realloc(empregados, n * sizeof(Empregado));
+                if (empregados == NULL) {
+                    printf("Erro na alocação de memória\n");
+                    exit(1);
+                }
+                ler_empregado(&empregados[n - 1]);
+                break;
+            case 2:
+                for (int i = 0; i < n; i++) {
+                    printf("\nEmpregado %d\n", i + 1);
+                    escrever_empregado(&empregados[i]);
+                }
+                break;
+            case 3:
+                printf("Digite o índice do empregado a ser excluído (1 a %d): ", n);
+                int indice;
+                scanf("%d", &indice);
+                excluir_empregado(&empregados, &n, indice - 1);
+                break;
+            case 4:
+                printf("Programa encerrado\n");
+                break;
+            default:
+                printf("Escolha inválida\n");
+                break;
+        }
+    } while (escolha != 4);
+
+    free(empregados);
+    return 0;
+}
