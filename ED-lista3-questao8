@@ -1,0 +1,88 @@
+/*
+** Função : Implementação do Tipo Abstrato de Dado (TAD) Complexo em C
+** Autor : [Seu Nome]
+** Data : [Data de hoje]
+** Observações: O programa define um TAD Complexo para realizar aritmética com números complexos.
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    double real;
+    double imaginario;
+} Complexo;
+
+Complexo* criar_complexo(double real, double imaginario) {
+    Complexo* novo_complexo = (Complexo*)malloc(sizeof(Complexo));
+    if (novo_complexo == NULL) {
+        printf("Erro: Falha ao alocar memória para o número complexo\n");
+        exit(1);
+    }
+    novo_complexo->real = real;
+    novo_complexo->imaginario = imaginario;
+    return novo_complexo;
+}
+
+void destruir_complexo(Complexo* complexo) {
+    free(complexo);
+}
+
+Complexo* ler_complexo() {
+    double real, imaginario;
+    printf("Digite a parte real do número complexo: ");
+    scanf("%lf", &real);
+    printf("Digite a parte imaginária do número complexo: ");
+    scanf("%lf", &imaginario);
+    return criar_complexo(real, imaginario);
+}
+
+Complexo* somar_complexo(Complexo* c1, Complexo* c2) {
+    return criar_complexo(c1->real + c2->real, c1->imaginario + c2->imaginario);
+}
+
+Complexo* subtrair_complexo(Complexo* c1, Complexo* c2) {
+    return criar_complexo(c1->real - c2->real, c1->imaginario - c2->imaginario);
+}
+
+Complexo* multiplicar_complexo(Complexo* c1, Complexo* c2) {
+    double real = c1->real * c2->real - c1->imaginario * c2->imaginario;
+    double imaginario = c1->real * c2->imaginario + c1->imaginario * c2->real;
+    return criar_complexo(real, imaginario);
+}
+
+Complexo* dividir_complexo(Complexo* c1, Complexo* c2) {
+    double divisor = c2->real * c2->real + c2->imaginario * c2->imaginario;
+    double real = (c1->real * c2->real + c1->imaginario * c2->imaginario) / divisor;
+    double imaginario = (c1->imaginario * c2->real - c1->real * c2->imaginario) / divisor;
+    return criar_complexo(real, imaginario);
+}
+
+void mostrar_complexo(Complexo* complexo) {
+    printf("Número complexo: (%.2f, %.2f)\n", complexo->real, complexo->imaginario);
+}
+
+int main() {
+    Complexo* c1 = ler_complexo();
+    Complexo* c2 = ler_complexo();
+
+    Complexo* soma = somar_complexo(c1, c2);
+    Complexo* diferenca = subtrair_complexo(c1, c2);
+    Complexo* produto = multiplicar_complexo(c1, c2);
+    Complexo* quociente = dividir_complexo(c1, c2);
+
+    printf("\nResultados das operações:\n");
+    mostrar_complexo(soma);
+    mostrar_complexo(diferenca);
+    mostrar_complexo(produto);
+    mostrar_complexo(quociente);
+
+    destruir_complexo(c1);
+    destruir_complexo(c2);
+    destruir_complexo(soma);
+    destruir_complexo(diferenca);
+    destruir_complexo(produto);
+    destruir_complexo(quociente);
+
+    return 0;
+}
