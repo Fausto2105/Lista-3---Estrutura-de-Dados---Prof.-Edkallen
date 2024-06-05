@@ -1,0 +1,128 @@
+/*
+** Função : Gerenciamento de registros de aeroportos
+** Autor : [Seu Nome]
+** Data : [Data de hoje]
+** Observações: O programa gerencia registros de aeroportos, permitindo adicionar, visualizar e excluir registros.
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIGLA 4
+#define MAX_CIDADE 51
+#define MAX_PAIS 31
+
+typedef struct {
+    char sigla[MAX_SIGLA];
+    char cidade[MAX_CIDADE];
+    char pais[MAX_PAIS];
+    float taxa;
+    int capacidade;
+} Aeroporto;
+
+void ler_aeroporto(Aeroporto* aeroporto) {
+    printf("Digite a sigla (3 caracteres): ");
+    fgets(aeroporto->sigla, MAX_SIGLA, stdin);
+    aeroporto->sigla[strcspn(aeroporto->sigla, "\n")] = '\0'; 
+
+    printf("Digite a cidade: ");
+    fgets(aeroporto->cidade, MAX_CIDADE, stdin);
+    aeroporto->cidade[strcspn(aeroporto->cidade, "\n")] = '\0'; 
+
+    printf("Digite o país: ");
+    fgets(aeroporto->pais, MAX_PAIS, stdin);
+    aeroporto->pais[strcspn(aeroporto->pais, "\n")] = '\0'; 
+
+    printf("Digite a taxa: ");
+    scanf("%f", &aeroporto->taxa);
+
+    printf("Digite a capacidade: ");
+    scanf("%d", &aeroporto->capacidade);
+    getchar(); // Limpar o buffer do '\n'
+}
+
+void escrever_aeroporto(Aeroporto* aeroporto) {
+    printf("\nSigla: %s\n", aeroporto->sigla);
+    printf("Cidade: %s\n", aeroporto->cidade);
+    printf("País: %s\n", aeroporto->pais);
+    printf("Taxa: %.2f\n", aeroporto->taxa);
+    printf("Capacidade: %d\n", aeroporto->capacidade);
+}
+
+void excluir_aeroporto(Aeroporto** aeroportos, int* n, int indice) {
+    if (indice < 0 || indice >= *n) {
+        printf("Índice inválido\n");
+        return;
+    }
+
+    free(aeroportos[indice]);
+    for (int i = indice; i < *n - 1; i++) {
+        aeroportos[i] = aeroportos[i + 1];
+    }
+
+    (*n)--;
+    aeroportos = (Aeroporto**)realloc(aeroportos, (*n) * sizeof(Aeroporto*));
+    if (aeroportos == NULL && *n > 0) {
+        printf("Erro na realocação de memória\n");
+        exit(1);
+    }
+}
+
+int main() {
+    int n = 0;
+    Aeroporto** aeroportos = NULL;
+
+    int escolha;
+    do {
+        printf("\nEscolha uma operação:\n");
+        printf("1. Adicionar aeroporto\n");
+        printf("2. Visualizar todos os aeroportos\n");
+        printf("3. Excluir aeroporto\n");
+        printf("4. Sair\n");
+        printf("Escolha: ");
+        scanf("%d", &escolha);
+        getchar(); 
+
+        switch (escolha) {
+            case 1:
+                n++;
+                aeroportos = (Aeroporto**)realloc(aeroportos, n * sizeof(Aeroporto*));
+                if (aeroportos == NULL) {
+                    printf("Erro na alocação de memória\n");
+                    exit(1);
+                }
+                aeroportos[n - 1] = (Aeroporto*)malloc(sizeof(Aeroporto));
+                if (aeroportos[n - 1] == NULL) {
+                    printf("Erro na alocação de memória\n");
+                    exit(1);
+                }
+                ler_aeroporto(aeroportos[n - 1]);
+                break;
+            case 2:
+                for (int i = 0; i < n; i++) {
+                    printf("\nAeroporto %d\n", i + 1);
+                    escrever_aeroporto(aeroportos[i]);
+                }
+                break;
+            case 3:
+                printf("Digite o índice do aeroporto a ser excluído (1 a %d): ", n);
+                int indice;
+                scanf("%d", &indice);
+                excluir_aeroporto(aeroportos, &n, indice - 1);
+                break;
+            case 4:
+                printf("Programa encerrado\n");
+                break;
+            default:
+                printf("Escolha inválida\n");
+                break;
+        }
+    } while (escolha != 4);
+
+    for (int i = 0; i < n; i++) {
+        free(aeroportos[i]);
+    }
+    free(aeroportos);
+    return 0;
+}
