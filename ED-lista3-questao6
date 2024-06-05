@@ -1,0 +1,37 @@
+/*
+** Função : Calcular a raiz quadrada de um número usando o método de Newton-Raphson
+** Autor : [Seu Nome]
+** Data : [Data de hoje]
+** Observações: O programa calcula a raiz quadrada de um número com uma precisão de 0.0001 usando o método de Newton-Raphson.
+*/
+
+#include <stdio.h>
+#include <math.h>
+
+double raiz_quadrada(double n) {
+    double x = n; 
+    double erro = 0.0001;
+
+    while (1) {
+        double prox_x = 0.5 * (x + n / x); 
+        if (fabs(prox_x - x) < erro) 
+            break;
+        x = prox_x;
+    }
+
+    return x;
+}
+
+int main() {
+    double n;
+    printf("Digite um número para calcular sua raiz quadrada: ");
+    scanf("%lf", &n);
+
+    if (n < 0) {
+        printf("Não é possível calcular a raiz quadrada de um número negativo.\n");
+    } else {
+        printf("A raiz quadrada de %.2lf é aproximadamente %.4lf\n", n, raiz_quadrada(n));
+    }
+
+    return 0;
+}
