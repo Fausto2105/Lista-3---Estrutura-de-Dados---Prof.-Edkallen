@@ -1,0 +1,44 @@
+/*
+** Função : Verificar a Conjectura de Goldbach para números até N
+** Autor : [Seu Nome]
+** Data : [Data de hoje]
+** Observações: O programa verifica se todos os números até N podem ser escritos como a soma de dois números primos.
+*/
+
+#include <stdio.h>
+#include <stdbool.h>
+
+bool eh_primo(int n) {
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 == 0 || n % 3 == 0) return false;
+    for (int i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0) return false;
+    }
+    return true;
+}
+
+int main() {
+    int N;
+    printf("Digite um número N para verificar a Conjectura de Goldbach até N: ");
+    scanf("%d", &N);
+
+    for (int num = 2; num <= N; num++) {
+        if (num % 2 != 0) continue; 
+
+        bool encontrado = false;
+        for (int i = 2; i <= num / 2; i++) {
+            if (eh_primo(i) && eh_primo(num - i)) {
+                printf("%d = %d + %d\n", num, i, num - i);
+                encontrado = true;
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            printf("Nenhuma combinação para %d, o que é contra a Conjectura de Goldbach.\n", num);
+        }
+    }
+    
+    return 0;
+}
